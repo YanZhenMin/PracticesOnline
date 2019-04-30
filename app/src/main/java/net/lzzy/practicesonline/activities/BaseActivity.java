@@ -3,6 +3,7 @@ package net.lzzy.practicesonline.activities;
 import android.os.Bundle;
 import android.view.Window;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -14,32 +15,52 @@ import net.lzzy.practicesonline.utils.AppUtils;
  * Description:
  */
 public abstract class BaseActivity extends AppCompatActivity {
+    private Fragment fragment;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        AppUtils.addActivity(this);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(getLayoutRes());
-        FragmentManager manager = getSupportFragmentManager();
-        Fragment fragment =manager.findFragmentById(getContainerId());
-        if (fragment==null){
-            fragment= createFragment();
-            manager.beginTransaction().add(getContainerId(),fragment).commit();
+        AppUtils.addActivity(this);
+        FragmentManager manager=getSupportFragmentManager();
+        fragment = manager.findFragmentById(getContainerId());
+        if (fragment ==null){
+            fragment =createFragment();
+            manager.beginTransaction().add(getContainerId(), fragment).commit();
         }
     }
 
+    protected Fragment getFragment(){
+        return fragment;
+    }
+    /**
+     * 返回相应布局文件资源
+     * @return
+     */
+    protected abstract int getLayoutRes();
+
+    /**
+     * 执行在视图创建后
+     */
+
+    protected abstract int getContainerId();
+
+    protected abstract Fragment createFragment();
+
+    protected void setFragment(int resId){
+        FragmentManager manager=getSupportFragmentManager();
+        Fragment fragment=manager.findFragmentById(resId);
+        if (fragment==null){
+            manager.beginTransaction().add(resId,fragment).commit();
+        }
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         AppUtils.removeActivity(this);
     }
-
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        AppUtils.setRunning(getLocalClassName());
-//    }
 
     @Override
     protected void onResume() {
@@ -52,22 +73,4 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onStop();
         AppUtils.setStopped(getLocalClassName());
     }
-
-    /**
-     * Activity的布局文件id
-     * @return 布局资源id
-     */
-    protected abstract int getLayoutRes();
-
-    /**
-     * fragment容器id
-     * @return id
-     */
-    protected abstract int getContainerId();
-
-    /**
-     * 生成托管的Fragment对象
-     * @return Fragment
-     */
-    protected abstract Fragment createFragment();
 }

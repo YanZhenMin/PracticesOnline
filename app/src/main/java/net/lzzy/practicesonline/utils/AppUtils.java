@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.text.TextUtils;
 import android.util.Pair;
 
 //import com.google.zxing.BarcodeFormat;
@@ -29,9 +26,7 @@ import android.util.Pair;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -146,7 +141,7 @@ public class AppUtils extends Application {
 
     public static Pair<String,String> loadServerSetting(Context context){
         SharedPreferences spSetting=context.getSharedPreferences(SP_SETTING,MODE_PRIVATE);
-        String ip=spSetting.getString(URL_IP,"10.88.91.102");
+        String ip=spSetting.getString(URL_IP,"10.88.91.103");
         String port=spSetting.getString(URL_PORT,"8888");
         return new Pair<>(ip,port);
     }

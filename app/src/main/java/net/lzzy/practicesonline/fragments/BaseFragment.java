@@ -29,7 +29,6 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         populate();
     }
 
@@ -42,6 +41,5 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public abstract void search(String kw);
-
 
 }

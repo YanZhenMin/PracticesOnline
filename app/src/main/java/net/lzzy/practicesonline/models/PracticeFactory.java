@@ -35,7 +35,7 @@ public class PracticeFactory {
     public List<Practice> search(String kw){
         try {
             return repository
-                    .getByKeyword(kw,new String[]{Practice.COL_NAME, Practice.COL_OUTLIES},false);
+                    .getByKeyword(kw,new String[]{Practice.COL_NAME, Practice.COL_OUTLINES},false);
         }catch (IllegalAccessException|InstantiationException e){
             e.printStackTrace();
             return new ArrayList<>();
