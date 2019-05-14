@@ -116,7 +116,7 @@ public class ApiService {
     }
 
     public static int okPost(String address, JSONObject json) throws IOException {
-        RequestBody body=RequestBody.create(MediaType.parse(""),json.toString());
+        RequestBody body=RequestBody.create(MediaType.parse("application/json; charset=utf-8"),json.toString());
         Request request =new Request.Builder()
                 .url(address)
                 .post(body)
@@ -127,7 +127,7 @@ public class ApiService {
     }
 
     public static String okRequest(String address, JSONObject json) throws IOException{
-        RequestBody body=RequestBody.create(MediaType.parse("application/json; charset=utf_8")
+        RequestBody body=RequestBody.create(MediaType.parse("application/json; charset=utf-8")
                 ,json.toString());
         Request request =new Request.Builder()
                 .url(address)

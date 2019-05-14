@@ -23,6 +23,7 @@ import net.lzzy.practicesonline.activities.SplashActivity;
  * Description:
  */
 public class ViewUtils {
+
     private static AlertDialog dialog;
 
     public static void showProgress(Context context,String message){
@@ -41,28 +42,29 @@ public class ViewUtils {
             dialog.dismiss();
         }
     }
-
     public static void gotoSetting(Context context){
         View view= LayoutInflater.from(context).inflate(R.layout.dialog_setting,null);
         Pair<String,String> url=AppUtils.loadServerSetting(context);
-        EditText edtIp =view.findViewById(R.id.dialog_setting_edt_ip);
+
+        EditText edtIp=view.findViewById(R.id.dialog_setting_edt_ip);
         edtIp.setText(url.first);
-        EditText editPort=view.findViewById(R.id.dialog_setting_edt_port);
-        editPort.setText(url.second);
-       new AlertDialog.Builder(context)
-               .setView(view)
-               .setNegativeButton("取消",(dialog, which) -> gotoMain(context))
-               .setPositiveButton("保存",(dialog, which) -> {
-                   String ip=edtIp.getText().toString();
-                   String port=editPort.getText().toString();
-                   if (TextUtils.isEmpty(ip)|| TextUtils.isEmpty(port)){
-                       Toast.makeText(context,"信息不完整",Toast.LENGTH_LONG).show();
-                       return;
-                   }
-                   AppUtils.saveServerSetting(ip,port,context);
-                   gotoMain(context);
-               })
-               .show();
+        EditText edtPort=view.findViewById(R.id.dialog_setting_edt_port);
+        edtPort.setText(url.second);
+        new AlertDialog.Builder(context)
+                .setView(view)
+                .setNegativeButton("cancel",(dialog, which) -> {})
+                .setPositiveButton("save",(dialog, which) -> {
+                    String ip=edtIp.getText().toString();
+                    String port=edtPort.getText().toString();
+                    if (TextUtils.isEmpty(ip)||TextUtils.isEmpty(port)){
+                        Toast.makeText(context, "信息不完整", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    AppUtils.saveServerSetting(ip,port,context);
+                    gotoMain(context);
+                })
+                .show();
+
     }
 
     private static void gotoMain(Context context){
@@ -71,18 +73,13 @@ public class ViewUtils {
         }
     }
 
-    public abstract static class AbstractTouchListener implements SearchView.OnTouchListener{
-        @SuppressWarnings("ClickableViewAccessibility")
+    public abstract static class AbstractTouchListener implements View.OnTouchListener{
+        @SuppressWarnings("ClickableViewAccessivility")
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             return handleTouch(event);
         }
 
-        /**
-         * 处理触摸事件
-         * @param event 触摸事件对象
-         * @return 是否拦截触摸事件
-         */
         public abstract boolean handleTouch(MotionEvent event);
     }
 
@@ -104,4 +101,15 @@ public class ViewUtils {
          */
         public abstract void handleQuery(String kw);
     }
+
+    public static int px2dp(int pxValue) {
+        float scale = AppUtils.getContext().getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static int dp2px(int dpValue) {
+        float scale = AppUtils.getContext().getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
 }

@@ -42,7 +42,5 @@ android:gravity="center_vertical">
     android:gravity="center"
     android:focusable="false"
     android:visibility="gone"
-
-    android:text="删除"
-    />
+    android:text="删除" />
 </LinearLayout>

@@ -34,7 +34,6 @@ public class DetectWebService extends Service {
     public static final int FLAG_SERVER_EXCEPTION=0;
     private NotificationManager notificationManager;
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -114,15 +113,4 @@ public class DetectWebService extends Service {
 
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

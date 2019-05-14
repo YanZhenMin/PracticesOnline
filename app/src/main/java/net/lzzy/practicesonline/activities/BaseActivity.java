@@ -34,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected Fragment getFragment(){
         return fragment;
     }
+
     /**
      * 返回相应布局文件资源
      * @return

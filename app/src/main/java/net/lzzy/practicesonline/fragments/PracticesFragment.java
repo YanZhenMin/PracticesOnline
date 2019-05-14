@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.lzzy.practicesonline.R;
-import net.lzzy.practicesonline.models.Option;
 import net.lzzy.practicesonline.models.Practice;
 import net.lzzy.practicesonline.models.PracticeFactory;
 import net.lzzy.practicesonline.models.Question;
@@ -35,8 +34,6 @@ import net.lzzy.practicesonline.utils.DateTimeUtils;
 import net.lzzy.practicesonline.utils.ViewUtils;
 import net.lzzy.sqllib.GenericAdapter;
 import net.lzzy.sqllib.ViewHolder;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -242,7 +239,6 @@ public class PracticesFragment extends BaseFragment {
                     tvOutLines.setVisibility(View.GONE);
                 }
                 Button btnDel=viewHolder.getView(R.id.list_item_btn_del);
-//                btnDel.setVisibility(View.GONE);
                 btnDel.setOnClickListener(v -> new AlertDialog.Builder(getContext())
                         .setMessage("要删除该章节及目录吗？")
                         .setPositiveButton("删除",(dialog, which) -> {
@@ -256,7 +252,7 @@ public class PracticesFragment extends BaseFragment {
                 viewHolder.getConvertView().setOnTouchListener(new ViewUtils.AbstractTouchListener() {
                     @Override
                     public boolean handleTouch(MotionEvent event) {
-                        slideToDelte(event,btnDel,practice);
+                        slideToDelete(event,btnDel,practice);
                         return true;
                     }
                 });
@@ -278,7 +274,7 @@ public class PracticesFragment extends BaseFragment {
     private float touchX1;
     private static final float MIN_DISTANCE=100;
     private boolean isDeleting=false;
-    private void slideToDelte(MotionEvent event,Button btnDel,Practice practice){
+    private void slideToDelete(MotionEvent event, Button btnDel, Practice practice){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 touchX1=event.getX();
@@ -307,7 +303,6 @@ public class PracticesFragment extends BaseFragment {
     private void performItemClick(Practice practice) {
         if (practice.isDownloaded()){
             showNotification();
-            //||QuestionFactory.getInstance().getQuestionByPractice(practice.getId().toString())!=null
             listener.onPracticesSelected(practice.getId().toString(),practice.getApiId());
         }else {
             new AlertDialog.Builder(getContext())
@@ -320,7 +315,6 @@ public class PracticesFragment extends BaseFragment {
 
     private void showNotification() {
         //mNotificationManager = Context.NOTIFICATION_SERVICE;
-
     }
     public void startRefresh(){
         swipe.setRefreshing(true);
@@ -369,9 +363,6 @@ public class PracticesFragment extends BaseFragment {
                     }
                 }
                 fragment.get().adapter.notifyDataSetChanged();
-//                for (Question question:questions){
-//                    questionFactory.insert(question);
-//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -397,12 +388,9 @@ public class PracticesFragment extends BaseFragment {
             public boolean handleTouch(MotionEvent event) {
                 isDeleting=false;
                 adapter.notifyDataSetChanged();
-
                 return false;
             }
         });
-
-
     }
 
     @Override

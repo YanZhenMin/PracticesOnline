@@ -26,7 +26,11 @@ import android.util.Pair;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -42,7 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AppUtils extends Application {
     public static final String URL_IP="urlIp";
-    public static final String URL_PORT="urlport";
+    public static final String URL_PORT="urlPort";
     public static final String SP_SETTING="spSetting";
     private static List<Activity> activities=new LinkedList<>();
     private static WeakReference<Context> wContext;
@@ -144,5 +148,32 @@ public class AppUtils extends Application {
         String ip=spSetting.getString(URL_IP,"10.88.91.103");
         String port=spSetting.getString(URL_PORT,"8888");
         return new Pair<>(ip,port);
+    }
+
+    public static List<String> getMacAddress(){
+            try {
+                Enumeration<NetworkInterface> interfaces=NetworkInterface.getNetworkInterfaces();
+                List<String> items =new ArrayList<>();
+                while (interfaces.hasMoreElements()){
+                    NetworkInterface ni = interfaces.nextElement();
+                    byte[] address=ni.getHardwareAddress();
+                    if (address==null||address.length==0){
+                        continue;
+                    }
+                    StringBuilder builder =new StringBuilder();
+                    for (byte a:address){
+                        builder.append(String.format("%02X:",a));
+                    }
+                    if (builder.length()>0){
+                        builder.deleteCharAt(builder.length()-1);
+                    }
+                    if (ni.isUp()){
+                        items.add(ni.getName()+":"+builder.toString());
+                    }
+                }
+                return items;
+            } catch (SocketException e) {
+               return new ArrayList<>();
+            }
     }
 }

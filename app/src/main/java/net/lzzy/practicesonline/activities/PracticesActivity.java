@@ -100,7 +100,6 @@ public class PracticesActivity extends BaseActivity implements PracticesFragment
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         new AlertDialog.Builder(this)
                 .setMessage("退出应用吗？")
                 .setPositiveButton("退出",(dialog, which) -> AppUtils.exit())
@@ -135,6 +134,7 @@ public class PracticesActivity extends BaseActivity implements PracticesFragment
         mNotificationManager.notify(0, mNotification);
         Intent intent=new Intent(this,QuestionActivity.class);
         intent.putExtra(EXTRA_API_ID,apiId);
+        intent.putExtra(EXTRA_PRACTICE_ID,practiceId);
         startActivity(intent);
     }
 }
