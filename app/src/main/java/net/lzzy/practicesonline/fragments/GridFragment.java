@@ -1,81 +1,106 @@
 package net.lzzy.practicesonline.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-
 import net.lzzy.practicesonline.R;
 import net.lzzy.practicesonline.models.view.QuestionResult;
-import net.lzzy.practicesonline.utils.AppUtils;
 import net.lzzy.sqllib.GenericAdapter;
 import net.lzzy.sqllib.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.Result;
-
 /**
- * Created by lzzy_gxy on 2019/5/13.
+ * @author lzzy_gxy
+ * @date 2019/5/13
  * Description:
  */
 public class GridFragment extends BaseFragment {
-    private static final String ARG_PRACTICES_ID = "argPracticesId";
-    public static final String ARG_RESULT = "argResult";
-    private String practicesId;
+    private static final String GRID_RESULTS = "gridResults";
     private List<QuestionResult> results;
-    GenericAdapter<QuestionResult> adapter;
+    private TextView textView;
+    private OnResultListener listener;
+    private GridView gridView;
+    //region
 
-    @Override
-    protected void populate() {
-        GridView gridView=find(R.id.fragment_grid_f);
-        adapter= new GenericAdapter<QuestionResult>(AppUtils.getContext(), R.layout.grid_item, results) {
-            @Override
-            public void populate(ViewHolder viewHolder, QuestionResult result) {
-                String a=results.lastIndexOf(result)+1+"";
-                viewHolder.setTextView(R.id.grid_item_tv,a);
-                Button btn=viewHolder.getView(R.id.grid_item_tv);
-                if (result.isRight()){
-                    btn.setBackgroundResource(R.drawable.grid_green);
-                }else {
-                    btn.setBackgroundResource(R.drawable.grid_red);
-                }
-            }
-
-            @Override
-            public boolean persistInsert(QuestionResult questionResult) {
-                return false;
-            }
-
-            @Override
-            public boolean persistDelete(QuestionResult questionResult) {
-                return false;
-            }
-        };
-        gridView.setAdapter(adapter);
+    public static GridFragment newInstance(List<QuestionResult> results) {
+        GridFragment fragment = new GridFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(GRID_RESULTS, (ArrayList<? extends Parcelable>) results);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments()!=null){
-            practicesId=getArguments().getString(ARG_PRACTICES_ID);
-            results=getArguments().getParcelableArrayList(ARG_RESULT);
+
+        if (getArguments() != null) {
+            results = getArguments().getParcelableArrayList(GRID_RESULTS);
         }
     }
 
-    public static GridFragment newInstance(String practicesId, List<QuestionResult> results){
-        GridFragment Fragment=new GridFragment();
-        Bundle args=new Bundle();
-        args.putString(ARG_PRACTICES_ID,practicesId);
-        args.putParcelableArrayList(ARG_RESULT,(ArrayList<? extends Parcelable>) results);
-        Fragment.setArguments(args);
-        return Fragment;
+    @Override
+    protected void populate() {
+        produceOptions();
     }
+
+    private void produceOptions() {
+        gridView = find(R.id.fragment_grid_gv);
+        textView = find(R.id.fragment_grid_tv_go);
+        GenericAdapter<QuestionResult> adapter = new GenericAdapter<QuestionResult>(getContext(), R.layout.result_item, results) {
+            @Override
+            public void populate(ViewHolder holder, QuestionResult result) {
+                holder.setTextView(R.id.fragment_grid_tv_go, getPosition(result) + 1 + "");
+                TextView tv = holder.getView(R.id.fragment_grid_tv_go);
+                tv.setOnClickListener(v -> listener.onResultTopic(getPosition(result)));
+
+                if (result.isRight()) {
+                    tv.setBackgroundResource(R.drawable.grid_green);
+                } else {
+                    tv.setBackgroundResource(R.drawable.grid_red);
+                }
+            }
+
+            @Override
+            public boolean persistInsert(QuestionResult result) {
+                return false;
+            }
+
+            @Override
+            public boolean persistDelete(QuestionResult result) {
+                return false;
+            }
+        };
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (listener != null) {
+                    listener.onResultTopic(position);
+                }
+            }
+        });
+        find(R.id.fragment_grid_tv_go).setOnClickListener(v ->
+                {
+                    if (listener != null) {
+                        listener.onClickImgButton();
+                    }
+                }
+        );
+    }
+
+
+//endregion
 
     @Override
     protected int getLayoutRes() {
@@ -85,5 +110,35 @@ public class GridFragment extends BaseFragment {
     @Override
     public void search(String kw) {
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (OnResultListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + "必须实现OnResultListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public interface OnResultListener {
+        /**
+         * 跳转题目视图传position数据
+         *
+         * @param pos
+         */
+        void onResultTopic(int pos);
+
+        /**
+         * 图表切换
+         */
+        void onClickImgButton();
     }
 }

@@ -12,7 +12,7 @@ import java.util.Calendar;
  * Description:
  */
 public class SplashFragment extends BaseFragment {
-    private int[] imgs=new int[]{R.drawable.splash1,R.drawable.splash2,R.drawable.splash3};
+    private int[] imgs =new int[]{R.drawable.splash1,R.drawable.splash2,R.drawable.splash3};
     private OnSplashFinishedListener listener;
 
     @Override
